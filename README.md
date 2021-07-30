@@ -4,7 +4,7 @@ Required Hardware:
 * Teensy (I used 3.2)
 * 128x64 SSD1306 display (I used SPI)
 * CAN transciever
-* Normally open push button (Optional)
+* Normally open push button connected to input pin and ground (Optional)
 
  
 SETUP NOTES
