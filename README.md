@@ -1,10 +1,10 @@
 # Teensy CAN Gauge
 
 Required Hardware:
-Teensy (I used 3.2)
-128x64 SSD1306 display (I used SPI)
-CAN transciever
-Normally open push button (Optional)
+*Teensy (I used 3.2)
+*128x64 SSD1306 display (I used SPI)
+*CAN transciever
+*Normally open push button (Optional)
 
  
 * SETUP NOTES
