@@ -25,8 +25,10 @@
 
 #include <SPI.h>
 #include <Wire.h>
-#include <Adafruit_GFX.h>
-#include <Adafruit_SSD1306.h>
+//#include <Adafruit_GFX.h>
+//#include <Adafruit_SSD1306.h>
+//#include <U8g2_for_Adafruit_GFX.h>
+#include <U8g2lib.h>
 
 //Variables / Pins
 //================================================================================================================================
@@ -76,8 +78,15 @@ void setupCAN(){
 #define SCREEN_ADDRESS 0x3C ///< See datasheet for Address; 0x3D for 128x64, 0x3C for 128x32
 
 // SPI
-Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT,
-  &SPI, OLED_DC, OLED_RESET, OLED_CS);
+//Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT,
+//  &SPI, OLED_DC, OLED_RESET, OLED_CS);
+
+U8G2_SSD1306_128X64_NONAME_F_4W_SW_SPI u8g2(U8G2_R0, /* clock=*/ 13, /* data=*/ 11, /* cs=*/ 10, /* dc=*/ 9, /* reset=*/ 15);
+
+//Adafruit_SSD1306 display(/*MOSI*/ 11, /*CLK*/ 13, /*DC*/ 9, /*RESET*/ 15, /*CS*/ 10);
+//U8G2_FOR_ADAFRUIT_GFX u8g2_for_adafruit_gfx;
+
+
 
 // I2C
 //Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
@@ -256,40 +265,48 @@ void buttonPress(){
 }
 
 // Print text of a defined size and location in pixels
+
 void printText(String text, int textSize, int locX, int locY){
-  display.setTextSize(textSize);         
-  display.setTextColor(SSD1306_WHITE);    
-  display.setCursor(locX,locY);          
-  display.println((text));                                 
+
+   char t[100];
+   text.toCharArray(t,100);        
+   u8g2.setColorIndex(1);
+   u8g2.setFont(u8g2_font_8x13B_tf);
+   //u8g2.clearBuffer();
+   u8g2.drawStr(locX, locY, t); 
+                                 
 }
 
 
 void showSplash(){
-  display.clearDisplay();
-  display.drawBitmap(0,0, rusEFI_splash, 128, 64, 1);
-  display.display();
+  u8g2.clear();
+  //u8g2.drawBitmap(0,0, rusEFI_splash, 128, 64, 1);
+  //u8g2.print();
 }
 
 // Display the CAN rate in kbps and Base ID setting
 void showSettings(){
-  display.clearDisplay();
+  //u8g2.clear();
   printText("CAN",2,0,0);
-  printText("rate " + String(canRate/1000) + "k",2,0,20);
-  printText("base " + String(baseID),2,0,40);
-  display.display();
+//  printText("rate " + String(canRate/1000) + "k",2,0,20);
+//  printText("base " + String(baseID),2,0,40);
+  //u8g2.print();
 }
 // Sets up a single sensor value for the display, still requires updating the display
-void printSensor1(struct DATA &channel){  
-    printText(channel.chName + " " + channel.unit,1,0,0);
-    printText(String(channel.val),3,0,35);     
+void printSensor1(struct DATA &channel){
+    printText(channel.chName,1,0,10);
+    printText(String(channel.val),3,0,40);
+       
 }
 
 // Sets up two sensor values for the display, still requires updating the display
 void printSensor2(struct DATA &channel, struct DATA &channel2){
-    printText(channel.chName + " " + channel.unit,1,0,0);
-    printText(String(channel.val),3,45,8); 
-    printText(channel2.chName + " " + channel2.unit,1,0,36);
-    printText(String(channel2.val),3,45,44); 
+  
+    printText(channel.chName,1,0,10);
+    printText(String(channel.val),3,60,25); 
+    printText(channel2.chName,1,0,45);
+    printText(String(channel2.val),3,60,60);
+ 
 }
 
 
@@ -325,21 +342,33 @@ void setup(){
   
   setupCAN();
   
-  // Start the display
-  if(!display.begin(SSD1306_SWITCHCAPVCC, SCREEN_ADDRESS)) {
-   for(;;);
-  }
+//  // Start the display
+//  if(!display.begin(SSD1306_SWITCHCAPVCC, SCREEN_ADDRESS)) {
+//   for(;;);
+//  }
+//
+//  display.begin(SSD1306_SWITCHCAPVCC);
+//  u8g2_for_adafruit_gfx.begin(display);
 
-  showSplash();
-  delay(2500);
+  u8g2.begin();   
 
-  showSettings();
-  delay(2500);
+  u8g2.setColorIndex(1);
+  u8g2.setFont(u8g2_font_6x10_tf);
+  
+  //showSplash();
+  //delay(2500);
+
+  //showSettings();
+  //delay(2500);
 
 // print message to the display, it will remain until data is recieved
-  display.clearDisplay();
-  printText((" Waiting   for Data     ..."),2,0,10);
-  display.display();
+  
+  u8g2.clearBuffer();
+  printText(("Waiting for Data"),1,0,10);
+  printText(("..."),1,55,40);
+  u8g2.sendBuffer();
+
+//delay(3000);
   
 }
 
@@ -350,9 +379,8 @@ void loop(){
   if ( Can0.available() ) {
     Can0.read(inMsg);
   // Update values contained in the reieved message
-    setupSensorData(inMsg);
-  
-   // Update the display with the selected sensor value
+    setupSensorData(inMsg);  
+    
     switch (g){
     case 0:
       printSensor1(afr);
@@ -373,11 +401,14 @@ void loop(){
       printSensor1(battery);
       break;
     }
-    
-    display.display();
-    display.clearDisplay();
+    // Update the display with the selected sensor value
+    u8g2.sendBuffer();
+    u8g2.clearBuffer();
   }
 
+  
+
+     
     // Cycle to the next gauge/sensor if the button was pressed
     if (b==1){
       b=0;
