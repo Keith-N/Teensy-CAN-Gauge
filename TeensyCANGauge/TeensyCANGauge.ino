@@ -362,7 +362,7 @@ void setup(){
   u8g2.setFont(u8g2_font_6x10_tf);
   
   showSplash();
-  delay(5000);
+  delay(3000);
 
   showSettings();
   delay(2500);
@@ -374,7 +374,7 @@ void setup(){
   printText(("..."),1,55,40);
   u8g2.sendBuffer();
 
-delay(1000);
+//delay(1000);
   
 }
 
