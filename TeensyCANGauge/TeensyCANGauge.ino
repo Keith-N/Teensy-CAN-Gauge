@@ -42,20 +42,20 @@ const int baseID = 512;
 const int canRate = 500000;
 
 // Use this for Teensy 3.2
-#include <FlexCAN.h> 
-FlexCAN CANbus(canRate);
+//#include <FlexCAN.h> 
+//FlexCAN CANbus(canRate);
 
 // Use this for Teensy 4.0
-//#include <FlexCAN_T4.h> 
-//FlexCAN_T4<CAN1, RX_SIZE_256, TX_SIZE_16> Can0;
+#include <FlexCAN_T4.h> 
+FlexCAN_T4<CAN1, RX_SIZE_256, TX_SIZE_16> Can0;
 
 void setupCAN(){
 // Use for Teensy 4.0
-// Can0.begin();  
-// Can0.setBaudRate(canRate);
+ Can0.begin();  
+ Can0.setBaudRate(canRate);
 
  // Use for Teensy 3.2
-  Can0.begin(canRate); 
+//  Can0.begin(canRate); 
 }
 
 // Display Settings
@@ -380,8 +380,8 @@ void loop(){
   CAN_message_t inMsg;
 
  // Only update the display when a CAN message is recieved 
-  if ( Can0.available() ) {
-    Can0.read(inMsg);
+  if ( Can0.read(inMsg) ) {
+    
   // Update values contained in the reieved message
     setupSensorData(inMsg);  
     
