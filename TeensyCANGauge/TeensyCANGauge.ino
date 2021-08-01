@@ -5,18 +5,13 @@
 * 
 * Useful Examples / Borrowed from:
 * https://github.com/Arthris/MSCan_Gauge
-* FlexCAN Library
-* Adafruit SSD1306 Library
 * 
 * rusEFI CAN Broadcast
 * https://github.com/rusefi/rusefi/blob/2ce77778653348a91cc579e3cb6b5df243e2e969/firmware/controllers/can/can_verbose.cpp
 * 
 * SETUP NOTES
-* Setup the CAN base ID and can rate to match the CAN broadcast in Tuner Studio. Found in CAN settings.
-* If using a Teensy 4.0 adjust commented lines in CAN settings. Teensy 3.x and 4.x use different pinouts
-* If using I2C for the display adjust commented lines in display settings
-* 
-* 
+* Setup the CAN base ID and can rate to match the CAN broadcast in Tuner Studio. Found in 'CAN Settings'.
+* Setup the display type and pins in 'Display Settings'
 */
 
 
@@ -67,15 +62,18 @@ void setupCAN(){
 //==================================================================================================================================
 
 
-// SPI SSD1306
+// SPI SSD1306 128x64
 //U8G2_SSD1306_128X64_NONAME_F_4W_SW_SPI u8g2(U8G2_R2, /* clock=*/ 13, /* data=*/ 11, /* cs=*/ 10, /* dc=*/ 9, /* reset=*/ 15);
 U8G2_SSD1306_128X64_NONAME_F_4W_HW_SPI u8g2(U8G2_R2,/* cs=*/ 10, /* dc=*/ 9, /* reset=*/ 15);
+//I2C
+//U8G2_SSD1306_128X64_NONAME_F_SW_I2C u8g2(U8G2_R0, /* clock=*/ 13, /* data=*/ 11, /* reset=*/ 8);
+//U8G2_SSD1306_128X64_ALT0_F_HW_I2C u8g2(U8G2_R0, /* reset=*/ U8X8_PIN_NONE);
 
-//SPI SH1106
-//U8G2_SH1106_128X64_NONAME_F_4W_SW_SPI(U8G2_R2, /* clock=*/ 13, /* data=*/ 11, /* cs=*/ 10, /* dc=*/ 9, /* reset=*/ 15);
-//U8G2_SH1106_128X64_NONAME_F_4W_HW_SPI(U8G2_R2, /* cs=*/ 10, /* dc=*/ 9, /* reset=*/ 15);
-
-
+//SPI SH1106 128x64
+//U8G2_SH1106_128X64_NONAME_F_4W_SW_SPI u8g2(U8G2_R2, /* clock=*/ 13, /* data=*/ 11, /* cs=*/ 10, /* dc=*/ 9, /* reset=*/ 15);
+//U8G2_SH1106_128X64_NONAME_F_4W_HW_SPI u8g2(U8G2_R2, /* cs=*/ 10, /* dc=*/ 9, /* reset=*/ 15);
+//I2C
+//U8G2_SH1106_128X64_NONAME_F_HW_I2C u8g2(U8G2_R0, /* reset=*/ U8X8_PIN_NONE);
 
 //Splash Screen
 // ==============================================================================================================================
